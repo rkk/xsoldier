@@ -12,6 +12,6 @@
 
 /* VERSION is defined in config.h because we use automake */
 
-#define UPDATE "13 Aug 2011"
+#define UPDATE "21 Oct 2017"
 
 #endif
