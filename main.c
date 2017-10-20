@@ -64,40 +64,39 @@ static int nopausemessage_temp = False;
 
 int main(int argc, char *argv[])
 {
-  display[0] = '\0';
-  manage = NULL;
+    display[0] = '\0';
+    manage = NULL;
 
     arginit(argc,argv);
 
     player = NewPlayerData();
-    if (putscore == True)
-    {
-	int i;
-	printf("      --- top 10 soldiers ---\n");
-	printf("Name                 Stage Score\n");
-	for (i=1; i<=10; i++)
-	    printf("%-20.20s %2d-%2d %8d\n",
-		   player->Rec[i].name,
-		   player->Rec[i].loop,player->Rec[i].stage,
-		   player->Rec[i].score);
+    if (putscore == True) {
+        int i;
+        printf("      --- top 10 soldiers ---\n");
+        printf("Name                 Stage Score\n");
+        for (i=1; i<=10; i++)
+            printf("%-20.20s %2d-%2d %8d\n",
+                   player->Rec[i].name,
+                   player->Rec[i].loop,player->Rec[i].stage,
+                   player->Rec[i].score);
 
-	exit(0);
+        exit(0);
     }
     if (scoreOK == False)
-	fprintf(stderr,"caution: no ranking mode!\n");
+        fprintf(stderr,"caution: no ranking mode!\n");
 
     init();
     manage = NewManage(256,256);
     if (maxlevel_temp == True)
-      manage->flag_maxlevel = True;
+        manage->flag_maxlevel = True;
     if (maxpower_temp == True)
-      manage->start_power = 30;
+        manage->start_power = 30;
     else
-      manage->start_power = 0;
+        manage->start_power = 0;
 
     if (nopausemessage_temp == True)
-      manage->flag_nopausemessage = True;
-    
+        manage->flag_nopausemessage = True;
+
 #ifndef HAVE_LIBSDL
     XMapWindow(dpy,win);
     XMapWindow(dpy,root);
@@ -105,39 +104,36 @@ int main(int argc, char *argv[])
     XFlush(dpy);
 #endif /* not HAVE_LIBSDL */
 
-    while (!(manage->program_should_quit))
-    {
-	keymask = 0;
+    while (!(manage->program_should_quit)) {
+        keymask = 0;
 
-	player->Rec[0].score = 0;
-	player->Ships = start_ship;
-	player->Next = FIRST1UP;
-	manage->Loop = start_loop;
+        player->Rec[0].score = 0;
+        player->Ships = start_ship;
+        player->Next = FIRST1UP;
+        manage->Loop = start_loop;
         manage->Stage = start_stage;
-        
-	if (Opening() == -1)
-	    break;
 
-	while (1)
-	{
-	    keymask = 0;
-	    ResetManage(manage);
+        if (Opening() == -1)
+            break;
 
-	    if (mainLoop() == 0)
-              /* game over */
-		break;
-	    Ending();
-	    manage->Loop++;
+        while (1) {
+            keymask = 0;
+            ResetManage(manage);
+
+            if (mainLoop() == 0)
+                /* game over */
+                break;
+            Ending();
+            manage->Loop++;
             manage->Stage = 1;
             if (manage->Loop >3)
-              break;
-	}
+                break;
+        }
 
-	if (scoreOK == True)
-	{
-	    if (MergeHiscore(player) > 0)
-		WriteHiscore(player);
-	}
+        if (scoreOK == True) {
+            if (MergeHiscore(player) > 0)
+                WriteHiscore(player);
+        }
     }
 
     DeleteManage(manage);
@@ -162,196 +158,137 @@ static void arginit(int argc, char *argv[])
     /* copy command name */
     strncpy(command,argv0, sizeof(command)-1);
 
-    for (i=1; i<argc; i++)
-    {
-	if ((strcmp(argv[i],"-display")==0) || (strcmp(argv[i],"-d")==0))
-	{
-	    if (i < argc-1)
-            {
-              strncpy(display,argv[i + 1],sizeof(display));
-              if (display[sizeof(display) - 1] != '\0')
-              {
-                fprintf(stderr, "warning: display name (arg %d) is too long, ",
-                        i + 1);
-                display[sizeof(display) - 1] = '\0';
-                fprintf(stderr, "truncated to %d chars\n",
-                        sizeof(display) - 1);
-              }
-              i++;
-            }
-            else
-            {
-              fprintf(stderr, "no display specified for -display (arg %d)\n",
-                      i);
-              exit(1);
-            }
-	}
-        else if ((strcmp(argv[i],"-wait")==0) || (strcmp(argv[i],"-w")==0))
-	{
-	    if (i < argc-1)
-	    {
-              if ((sscanf(argv[i+1], "%d", &a) == 1) && (a >= 1))
-              {
-                w_time = a;
-                if (w_time > WAIT)
-                  scoreOK = False;
+    for (i=1; i<argc; i++) {
+        if ((strcmp(argv[i],"-display")==0) || (strcmp(argv[i],"-d")==0)) {
+            if (i < argc-1) {
+                strncpy(display,argv[i + 1],sizeof(display));
+                if (display[sizeof(display) - 1] != '\0') {
+                    fprintf(stderr, "warning: display name (arg %d) is too long, ",
+                            i + 1);
+                    display[sizeof(display) - 1] = '\0';
+                    fprintf(stderr, "truncated to %d chars\n",
+                            sizeof(display) - 1);
+                }
                 i++;
-              }
-              else
-              {
-                fprintf(stderr, "wait (arg %d) must be a positive integer.\n",
-                        i + 1);
+            } else {
+                fprintf(stderr, "no display specified for -display (arg %d)\n",
+                        i);
                 exit(1);
-              }
             }
-            else
-            {
-              fprintf(stderr, "no wait specified for -wait (arg %d)\n", i);
-              exit(1);
+        } else if ((strcmp(argv[i],"-wait")==0) || (strcmp(argv[i],"-w")==0)) {
+            if (i < argc-1) {
+                if ((sscanf(argv[i+1], "%d", &a) == 1) && (a >= 1)) {
+                    w_time = a;
+                    if (w_time > WAIT)
+                        scoreOK = False;
+                    i++;
+                } else {
+                    fprintf(stderr, "wait (arg %d) must be a positive integer.\n",
+                            i + 1);
+                    exit(1);
+                }
+            } else {
+                fprintf(stderr, "no wait specified for -wait (arg %d)\n", i);
+                exit(1);
             }
-	}
-        else if ((strcmp(argv[i],"-cmap")==0) || (strcmp(argv[i],"-c")==0))
-        {
-          /* ignore */
-          ; 
-	}
-        else if ((strcmp(argv[i],"-score")==0) || (strcmp(argv[i],"-s")==0))
-	    putscore = True;
+        } else if ((strcmp(argv[i],"-cmap")==0) || (strcmp(argv[i],"-c")==0)) {
+            /* ignore */
+            ;
+        } else if ((strcmp(argv[i],"-score")==0) || (strcmp(argv[i],"-s")==0))
+            putscore = True;
         else if ((strcmp(argv[i],"-help")==0) || (strcmp(argv[i],"-h")==0))
             usage();
         else if (strcmp(argv[i],"-maxlevel")==0)
-	    maxlevel_temp = True;
+            maxlevel_temp = True;
         else if (strcmp(argv[i],"-nopausemessage")==0)
-	    nopausemessage_temp = True;
+            nopausemessage_temp = True;
 #ifdef DEBUG
-        else if (strcmp(argv[i],"-stage") == 0)
-        {
-          if (i + 1 < argc)
-          {
-            if (sscanf(argv[i+1], "%d-%d", &a, &b) == 2)
-            {
-              if ((a < 1) || (a > 3))
-              {
-                fprintf(stderr, "the loop number (arg %d) must be between "
-                        "1 and 3\n", i + 1);
+        else if (strcmp(argv[i],"-stage") == 0) {
+            if (i + 1 < argc) {
+                if (sscanf(argv[i+1], "%d-%d", &a, &b) == 2) {
+                    if ((a < 1) || (a > 3)) {
+                        fprintf(stderr, "the loop number (arg %d) must be between "
+                                "1 and 3\n", i + 1);
+                        exit(1);
+                    } else if ((b < 1) || (b > 8)) {
+                        fprintf(stderr, "the stage number (arg %d) must be between "
+                                "1 and 8\n", i + 1);
+                        exit(1);
+                    } else {
+                        scoreOK = False;
+                        start_loop = a;
+                        start_stage = b;
+                        i++;
+                    }
+                } else if (sscanf(argv[i+1], "%d", &b) == 1) {
+                    if ((b >= 1) && (b <= 8)) {
+                        scoreOK = False;
+                        start_stage = b;
+                        i++;
+                    } else {
+                        fprintf(stderr, "the stage number (arg %d) must be between "
+                                "1 and 8\n", i + 1);
+                        exit(1);
+                    }
+                } else {
+                    fprintf(stderr, "strange stage number (arg %d) for -stage\n",
+                            i + 1);
+                    exit(1);
+                }
+            } else {
+                fprintf(stderr, "missing stage number for -stage (arg %d)\n", i);
                 exit(1);
-              }
-              else if ((b < 1) || (b > 8))
-              {
-                fprintf(stderr, "the stage number (arg %d) must be between "
-                        "1 and 8\n", i + 1);
+            }
+        } else if (strcmp(argv[i],"-loop") == 0) {
+            if (i + 1 < argc) {
+                if (sscanf(argv[i+1], "%d", &a) == 1) {
+                    if ((a >= 1) && (a <= 3)) {
+                        scoreOK = False;
+                        start_loop = a;
+                        i++;
+                    } else {
+                        fprintf(stderr, "loop number (arg %d) must be between "
+                                "1 and 3\n", i + 1);
+                        exit(1);
+                    }
+                } else {
+                    fprintf(stderr, "strange loop number (arg %d) for -loop\n",
+                            i + 1);
+                    exit(1);
+                }
+            } else {
+                fprintf(stderr, "missing loop number for -loop (arg %d)\n", i);
                 exit(1);
-              }
-              else
-              {
-                scoreOK = False;
-                start_loop = a;
-                start_stage = b;
-                i++;
-              }
             }
-            else if (sscanf(argv[i+1], "%d", &b) == 1)
-            {
-              if ((b >= 1) && (b <= 8))
-              {
-                scoreOK = False;
-                start_stage = b;
-                i++;
-              }
-              else
-              {
-                fprintf(stderr, "the stage number (arg %d) must be between "
-                        "1 and 8\n", i + 1);
+        } else if (strcmp(argv[i],"-ship") == 0) {
+            if (i + 1 < argc) {
+                if (sscanf(argv[i+1], "%d", &a) == 1) {
+                    if ((a >= 0) && (a <= 99)) {
+                        scoreOK = False;
+                        start_ship = a;
+                        i++;
+                    } else {
+                        fprintf(stderr, "ship number (arg %d) must be between "
+                                "0 and 99\n", i + 1);
+                        exit(1);
+                    }
+                } else {
+                    fprintf(stderr, "strange ship number (arg %d) for -ship\n",
+                            i + 1);
+                    exit(1);
+                }
+            } else {
+                fprintf(stderr, "missing ship number for -ship (arg %d)\n", i);
                 exit(1);
-              }
             }
-            else
-            {
-              fprintf(stderr, "strange stage number (arg %d) for -stage\n",
-                      i + 1);
-              exit(1);
-            }
-          }
-          else
-          {
-            fprintf(stderr, "missing stage number for -stage (arg %d)\n", i);
-            exit(1);
-          }
-        }
-        else if (strcmp(argv[i],"-loop") == 0)
-        {
-          if (i + 1 < argc)
-          {
-            if (sscanf(argv[i+1], "%d", &a) == 1)
-            {
-              if ((a >= 1) && (a <= 3))
-              {
-                scoreOK = False;
-                start_loop = a;
-                i++;
-              }
-              else
-              {
-                fprintf(stderr, "loop number (arg %d) must be between "
-                        "1 and 3\n", i + 1);
-                exit(1);
-              }
-            }
-            else
-            {
-              fprintf(stderr, "strange loop number (arg %d) for -loop\n",
-                      i + 1);
-              exit(1);
-            }
-          }
-          else
-          {
-            fprintf(stderr, "missing loop number for -loop (arg %d)\n", i);
-            exit(1);
-          }
-        }
-        else if (strcmp(argv[i],"-ship") == 0)
-        {
-          if (i + 1 < argc)
-          {
-            if (sscanf(argv[i+1], "%d", &a) == 1)
-            {
-              if ((a >= 0) && (a <= 99))
-              {
-                scoreOK = False;
-                start_ship = a;
-                i++;
-              }
-              else
-              {
-                fprintf(stderr, "ship number (arg %d) must be between "
-                        "0 and 99\n", i + 1);
-                exit(1);
-              }
-            } 
-            else
-            {
-              fprintf(stderr, "strange ship number (arg %d) for -ship\n",
-                      i + 1);
-              exit(1);
-            }
-          }
-          else
-          {
-            fprintf(stderr, "missing ship number for -ship (arg %d)\n", i);
-            exit(1);
-          }
-        }
-        else if (strcmp(argv[i],"-maxpower")==0)
-        {
-          scoreOK = False;
-          maxpower_temp = True;
+        } else if (strcmp(argv[i],"-maxpower")==0) {
+            scoreOK = False;
+            maxpower_temp = True;
         }
 #endif /* DEBUG */
-        else
-        {
-          fprintf(stderr, "strange option (arg %d)\n", i);
-          exit(1);
+        else {
+            fprintf(stderr, "strange option (arg %d)\n", i);
+            exit(1);
         }
     }
 }
@@ -388,9 +325,9 @@ static void init(void)
     /* set wait */
     signal_delivered = 1;
     if (w_time < 0)
-	waittime = WAIT;
+        waittime = WAIT;
     else
-	waittime = w_time;
+        waittime = w_time;
 
     memset(&sig_act, 0, sizeof(sig_act));
     sig_act.sa_handler = sig_handle;

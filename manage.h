@@ -15,9 +15,9 @@ extern void ResetManage(CharManage *manage_temp);
 extern void DeleteManage(CharManage *Del);
 
 extern int NewObj(int mask,
-		  DelAtt (*action)(ObjData *my),
-		  DelAtt (*hit)(ObjData *my, ObjData *your),
-		  void (*realize)(ObjData *my, GrpData *grp));
+                  DelAtt (*action)(ObjData *my),
+                  DelAtt (*hit)(ObjData *my, ObjData *your),
+                  void (*realize)(ObjData *my, GrpData *grp));
 extern void DelObj(CharObj *del);
 extern PlayerData *NewPlayerData(void);
 extern void ClearEnemyShotManage(CharManage *manage_temp);

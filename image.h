@@ -31,9 +31,9 @@ extern void FreeImages(Image **imgs, int nimg);
 extern Image **ImageInit(const char *filename, int split);
 
 #ifdef GZIP
- #define GZ ".gz"
+#define GZ ".gz"
 #else
- #define GZ
+#define GZ
 #endif
 
 #endif /* IMAGE_H_INCLUDE */

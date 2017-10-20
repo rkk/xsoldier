@@ -32,30 +32,28 @@ void ShotToAngle(int x, int y, int angle, int speed)
         return;
 
     if (speed <= 0)
-      speed = 1;
-    
-    for (i=1; i<manage->EnemyMax; i++)
-    {
-        if (manage->enemy[i]->Data.used == False)
-	{
-	    manage->EnemyShot.Data.X = x;
-	    manage->EnemyShot.Data.Y = y;
-	    manage->EnemyShot.Data.Angle = angle;
-	    manage->EnemyShot.Data.Speed = speed;
-	    manage->EnemyShot.Data.Cnt[0] = x << 8;
-	    manage->EnemyShot.Data.Cnt[1] = y << 8;
-	    manage->EnemyShot.Data.Cnt[2] = icos(angle);
-	    manage->EnemyShot.Data.Cnt[3] = isin(angle);
+        speed = 1;
 
-	    manage->enemy[i]->Data    = manage->EnemyShot.Data;
-	    manage->enemy[i]->Grp     = manage->EnemyShot.Grp;
+    for (i=1; i<manage->EnemyMax; i++) {
+        if (manage->enemy[i]->Data.used == False) {
+            manage->EnemyShot.Data.X = x;
+            manage->EnemyShot.Data.Y = y;
+            manage->EnemyShot.Data.Angle = angle;
+            manage->EnemyShot.Data.Speed = speed;
+            manage->EnemyShot.Data.Cnt[0] = x << 8;
+            manage->EnemyShot.Data.Cnt[1] = y << 8;
+            manage->EnemyShot.Data.Cnt[2] = icos(angle);
+            manage->EnemyShot.Data.Cnt[3] = isin(angle);
+
+            manage->enemy[i]->Data    = manage->EnemyShot.Data;
+            manage->enemy[i]->Grp     = manage->EnemyShot.Grp;
             manage->enemy[i]->Action  = EnemyShotAct;
             manage->enemy[i]->Realize = DrawImage;
             manage->enemy[i]->Hit     = NullDelHit;
 
-	    manage->EnemyNum++;
-	    return;
-	}
+            manage->EnemyNum++;
+            return;
+        }
     }
 }
 
@@ -71,74 +69,68 @@ void ShotToPoint(int x1, int y1, int x2, int y2, int speed)
         return;
 
     if (speed <= 0)
-      speed = 1;
-    
-    for (i=1; i<manage->EnemyMax; i++)
-    {
-        if (manage->enemy[i]->Data.used == False)
-	{
-	    manage->EnemyShot.Data.X = x1;
-	    manage->EnemyShot.Data.Y = y1;
-	    manage->EnemyShot.Data.Speed = speed;
-	    manage->EnemyShot.Data.Cnt[0] = x1 << 8;
-	    manage->EnemyShot.Data.Cnt[1] = y1 << 8;
-	    if (absx >= absy)
-	    {
-		manage->EnemyShot.Data.Cnt[2] = 1 << 8;
-		manage->EnemyShot.Data.Cnt[3] = (absy/(double)absx) * 256;
-	    }
-	    else
-	    {
-		manage->EnemyShot.Data.Cnt[2] = (absx/(double)absy) * 256;
-		manage->EnemyShot.Data.Cnt[3] = 1 << 8;
-	    }
-	    if (diffx < 0)
-		manage->EnemyShot.Data.Cnt[2] *= -1;
-	    if (diffy < 0)
-		manage->EnemyShot.Data.Cnt[3] *= -1;
+        speed = 1;
 
-	    manage->enemy[i]->Data    = manage->EnemyShot.Data;
-	    manage->enemy[i]->Grp     = manage->EnemyShot.Grp;
+    for (i=1; i<manage->EnemyMax; i++) {
+        if (manage->enemy[i]->Data.used == False) {
+            manage->EnemyShot.Data.X = x1;
+            manage->EnemyShot.Data.Y = y1;
+            manage->EnemyShot.Data.Speed = speed;
+            manage->EnemyShot.Data.Cnt[0] = x1 << 8;
+            manage->EnemyShot.Data.Cnt[1] = y1 << 8;
+            if (absx >= absy) {
+                manage->EnemyShot.Data.Cnt[2] = 1 << 8;
+                manage->EnemyShot.Data.Cnt[3] = (absy/(double)absx) * 256;
+            } else {
+                manage->EnemyShot.Data.Cnt[2] = (absx/(double)absy) * 256;
+                manage->EnemyShot.Data.Cnt[3] = 1 << 8;
+            }
+            if (diffx < 0)
+                manage->EnemyShot.Data.Cnt[2] *= -1;
+            if (diffy < 0)
+                manage->EnemyShot.Data.Cnt[3] *= -1;
+
+            manage->enemy[i]->Data    = manage->EnemyShot.Data;
+            manage->enemy[i]->Grp     = manage->EnemyShot.Grp;
             manage->enemy[i]->Action  = EnemyShotAct;
             manage->enemy[i]->Realize = DrawImage;
             manage->enemy[i]->Hit     = NullDelHit;
 
-	    manage->EnemyNum++;
-	    return;
-	}
+            manage->EnemyNum++;
+            return;
+        }
     }
 }
 
 DelAtt EnemyShotAct(ObjData *my)
 {
-  /* 2^8 = 256 */
+    /* 2^8 = 256 */
     my->Cnt[0] += my->Cnt[2]*my->Speed;
     my->X = my->Cnt[0] / 256;
     my->Cnt[1] += my->Cnt[3]*my->Speed;
     my->Y = my->Cnt[1] / 256;
 
     my->Cnt[4]++;
-    if (my->Cnt[4] >= 3)
-    {
-	my->Cnt[4] = 0;
-	my->image++;
-	if (my->image > 3)
-	    my->image = 0;
+    if (my->Cnt[4] >= 3) {
+        my->Cnt[4] = 0;
+        my->image++;
+        if (my->image > 3)
+            my->image = 0;
     }
 
     if ((my->X < 0 - my->Width/2) || (my->X > FieldW + my->Width/2))
-	return NullDel;
+        return NullDel;
     if ((my->Y < 0 - my->Height/2) || (my->Y > FieldH + my->Height/2))
-	return NullDel;
+        return NullDel;
 
     return NoneDel;
 }
 
 int RingToAngle(int x, int y, int angle, int speed)
 {
-  if (speed <= 0)
-    speed = 1;
-  
+    if (speed <= 0)
+        speed = 1;
+
     manage->New.Data.hitAtt = MEnemy;
     manage->New.Data.hitMask = MPlayer | MPShot;
 
@@ -170,8 +162,8 @@ int RingToPoint(int x1, int y1, int x2, int y2, int speed)
     int absy = abs(diffy);
 
     if (speed <= 0)
-      speed = 1;
-    
+        speed = 1;
+
     manage->New.Data.hitAtt = MEnemy;
     manage->New.Data.hitMask = MPlayer | MPShot;
 
@@ -183,20 +175,17 @@ int RingToPoint(int x1, int y1, int x2, int y2, int speed)
     manage->New.Data.Cnt[0] = x1 << 8;
     manage->New.Data.Cnt[1] = y1 << 8;
 
-    if (absx >= absy)
-    {
-	manage->New.Data.Cnt[2] = 1 << 8;
-	manage->New.Data.Cnt[3] = (absy/(double)absx) * 256;
-    }
-    else
-    {
-	manage->New.Data.Cnt[2] = (absx/(double)absy) * 256;
-	manage->New.Data.Cnt[3] = 1 << 8;
+    if (absx >= absy) {
+        manage->New.Data.Cnt[2] = 1 << 8;
+        manage->New.Data.Cnt[3] = (absy/(double)absx) * 256;
+    } else {
+        manage->New.Data.Cnt[2] = (absx/(double)absy) * 256;
+        manage->New.Data.Cnt[3] = 1 << 8;
     }
     if (diffx < 0)
-	manage->New.Data.Cnt[2] *= -1;
+        manage->New.Data.Cnt[2] *= -1;
     if (diffy < 0)
-	manage->New.Data.Cnt[3] *= -1;
+        manage->New.Data.Cnt[3] *= -1;
 
     manage->New.Data.Cnt[4] = 0;
     manage->New.Data.EnemyAtt = NullDel;
@@ -230,21 +219,18 @@ int HomingShot(int x, int y, int ix, int iy)
 
 DelAtt HomingAct(ObjData *my)
 {
-    if (my->X < manage->player[0]->Data.X)
-    {
-	if (my->inertX < 15)
+    if (my->X < manage->player[0]->Data.X) {
+        if (my->inertX < 15)
             my->inertX += 1;
-    }
-    else
-    {
-	if (my->inertX > -15)
+    } else {
+        if (my->inertX > -15)
             my->inertX -= 1;
-    }    
+    }
 
     if (my->Y < manage->player[0]->Data.Y)
-	my->inertY++;
+        my->inertY++;
     else
-	my->inertY--;
+        my->inertY--;
 
     my->X += my->inertX;
     my->Y += my->inertY;
@@ -252,18 +238,18 @@ DelAtt HomingAct(ObjData *my)
     my->image = GetDirection(0,0,my->inertX,my->inertY);
 
     if ((my->X < 0 - my->Width/2) || (my->X > FieldW + my->Width/2))
-	return NullDel;
+        return NullDel;
     if ((my->Y < 0 - my->Height/2) || (my->Y > FieldH + my->Height/2))
-	return NullDel;
+        return NullDel;
 
     return NoneDel;
 }
 
 int LaserShot(int x, int y, int speed)
 {
-  if (speed <= 0)
-    speed = 1;
-  
+    if (speed <= 0)
+        speed = 1;
+
     manage->New.Data.hitAtt = MEShot;
     manage->New.Data.hitMask = MPlayer;
 
@@ -284,17 +270,17 @@ DelAtt EnemyLaserAct(ObjData *my)
     my->Y += my->Speed;
 
     if ((my->X < 0 - my->Width/2) || (my->X > FieldW + my->Width/2))
-	return NullDel;
+        return NullDel;
     if ((my->Y < 0 - my->Height/2) || (my->Y > FieldH + my->Height/2))
-	return NullDel;
+        return NullDel;
 
     return NoneDel;
 }
 
 int BoundShot(int x, int y, int ix, int iy, int bound)
 {
-  if ((ix == 0) && (iy == 0))
-    ix = 1;
+    if ((ix == 0) && (iy == 0))
+        ix = 1;
 
     manage->New.Data.hitAtt = MEnemy;
     manage->New.Data.hitMask = MPlayer | MPShot;
@@ -317,31 +303,28 @@ int BoundShot(int x, int y, int ix, int iy, int bound)
 
 DelAtt BoundShotAct(ObjData *my)
 {
-  if (my->Cnt[0] <= my->Cnt[1])
-  {
-    if ((my->X+my->inertX>FieldW) || (my->X+my->inertX<0))
-    {
-      my->inertX = my->inertX*(-1);
-      my->Cnt[0]++;
+    if (my->Cnt[0] <= my->Cnt[1]) {
+        if ((my->X+my->inertX>FieldW) || (my->X+my->inertX<0)) {
+            my->inertX = my->inertX*(-1);
+            my->Cnt[0]++;
+        }
+        if ((my->Y+my->inertY>FieldH) || (my->Y+my->inertY<0)) {
+            my->inertY = my->inertY*(-1);
+            my->Cnt[0]++;
+        }
     }
-    if ((my->Y+my->inertY>FieldH) || (my->Y+my->inertY<0))
-    {
-      my->inertY = my->inertY*(-1);
-      my->Cnt[0]++;
-    }
-  }
-    
+
     my->image++;
     if (my->image >= 8)
-	my->image = 0;
+        my->image = 0;
 
     my->X += my->inertX;
     my->Y += my->inertY;
 
     if ((my->X < 0 - my->Width/2) || (my->X > FieldW + my->Width/2))
-	return NullDel;
+        return NullDel;
     if ((my->Y < 0 - my->Height/2) || (my->Y > FieldH + my->Height/2))
-	return NullDel;
+        return NullDel;
 
     return NoneDel;
 }

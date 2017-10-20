@@ -36,31 +36,29 @@
 
 void Ending(void)
 {
-    char stuff[][2][32] = 
-    {
-    {"XSoldier staff",      ""},
-    {"Producer",            "Y.Hashimoto"},
-    {"Program",             "R.Masuda"},
-    {"",                    "Y.Hashimoto"},
-    {"Character Algorithm", "K.Inomata"},
-    {"",                    "H.Yokobori"},
-    {"",                    "M.Nakayama"},
-    {"",                    "Y.Hashimoto"},
-    {"Character Design",    "H.Hayakawa"},
-    {"",                    "Y.Hashimoto"},
-    {"1.x Series Developer", "Oohara Yuuma"},
-    {"Special Thanks",      "N.Oohashi"},
-    {"",                    "T.Yamada"},
-    {"",                    "T.Igari"},
-    {"",                    "RAKI all members"},
-    {"",                    ".... and YOU."},
+    char stuff[][2][32] = {
+        {"XSoldier staff",      ""},
+        {"Producer",            "Y.Hashimoto"},
+        {"Program",             "R.Masuda"},
+        {"",                    "Y.Hashimoto"},
+        {"Character Algorithm", "K.Inomata"},
+        {"",                    "H.Yokobori"},
+        {"",                    "M.Nakayama"},
+        {"",                    "Y.Hashimoto"},
+        {"Character Design",    "H.Hayakawa"},
+        {"",                    "Y.Hashimoto"},
+        {"1.x Series Developer", "Oohara Yuuma"},
+        {"Special Thanks",      "N.Oohashi"},
+        {"",                    "T.Yamada"},
+        {"",                    "T.Igari"},
+        {"",                    "RAKI all members"},
+        {"",                    ".... and YOU."},
     };
 
-    char msg[][30] = 
-    {
-	"Try Next Stage!!",
-	"You are a great soldier!!!",
-	"crazy ........"
+    char msg[][30] = {
+        "Try Next Stage!!",
+        "You are a great soldier!!!",
+        "crazy ........"
     };
 
     /* number of staffs */
@@ -70,67 +68,55 @@ void Ending(void)
     int len;
     int i;
 
-    while (1)
-    {
+    while (1) {
         if (waittime && (signal_delivered==0))
-	    pause();
+            pause();
         signal_delivered = 0;
 
-	if (count < time)
-        {
+        if (count < time) {
             count++;
         }
 
         if (event_handle_ending() == 0)
-          return;
+            return;
 
         clear_window();
-	DrawStar(StarPtn1);
-	DrawStar(StarPtn2);
+        DrawStar(StarPtn1);
+        DrawStar(StarPtn2);
 
-	for (i=0; i<stfnumber; i++)
-	{
-	    if (i == 0)
-	    {
-		draw_string(210, FieldH - count + 100 * i,
+        for (i=0; i<stfnumber; i++) {
+            if (i == 0) {
+                draw_string(210, FieldH - count + 100 * i,
                             stuff[i][0], strlen(stuff[i][0]));
-		draw_string(450, FieldH - count + 100 * i,
+                draw_string(450, FieldH - count + 100 * i,
                             stuff[i][1], strlen(stuff[i][1]));
-	    }
-	    else
-	    {
-		draw_string(100, FieldH - count + 100 * i,
+            } else {
+                draw_string(100, FieldH - count + 100 * i,
                             stuff[i][0], strlen(stuff[i][0]));
-		draw_string(300, FieldH - count + 100 * i + 30,
+                draw_string(300, FieldH - count + 100 * i + 30,
                             stuff[i][1], strlen(stuff[i][1]));
-	    }
-	}
-	
-	if (count > time-30)
-	{
-	    len = count - (time-30);
+            }
+        }
 
-	    if (manage->Loop < 3)
-	    {
-		if (len >= strlen(msg[manage->Loop-1]))
-                {
-                  draw_string(200, 440, "Press space key",
-                              strlen("Press space key"));
-                  len = strlen(msg[manage->Loop-1]);
+        if (count > time-30) {
+            len = count - (time-30);
+
+            if (manage->Loop < 3) {
+                if (len >= strlen(msg[manage->Loop-1])) {
+                    draw_string(200, 440, "Press space key",
+                                strlen("Press space key"));
+                    len = strlen(msg[manage->Loop-1]);
                 }
-                
-		draw_string(200, 400, msg[manage->Loop-1], len);
-	    }
-	    else
-	    {
-		if (len >= strlen(msg[2]))
-                {
-                  draw_string(200, 440, "Press space key",
-                              strlen("Press space key"));
-                  len = strlen(msg[2]);
+
+                draw_string(200, 400, msg[manage->Loop-1], len);
+            } else {
+                if (len >= strlen(msg[2])) {
+                    draw_string(200, 440, "Press space key",
+                                strlen("Press space key"));
+                    len = strlen(msg[2]);
                 }
-	    }
-	}
+            }
+        }
 
         redraw_window();
     }

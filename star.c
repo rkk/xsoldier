@@ -22,9 +22,9 @@
 #define MAXSTAR 4
 
 typedef struct {
-  /* coordinates of the star */
+    /* coordinates of the star */
     int x, y;
-  /* pattern number of the star */
+    /* pattern number of the star */
     int cpat;
 } Point;
 
@@ -44,7 +44,8 @@ static unsigned int dW, dH;
 
 void InitStarModule(unsigned int w, unsigned int h)
 {
-    dW = w; dH = h;
+    dW = w;
+    dH = h;
     cust = 0;
     return;
 }
@@ -55,11 +56,10 @@ int CreateStar(const char *filename, int pattern, int speed, int nstar)
     Star  *S = &(star[cust]);
     int i;
 
-    if (cust >= MAXSTAR)
-    {
-	fprintf(stderr, "CreateStar: can't create star!\n");
-	fflush(stderr);
-	return -1;
+    if (cust >= MAXSTAR) {
+        fprintf(stderr, "CreateStar: can't create star!\n");
+        fflush(stderr);
+        return -1;
     }
 
     /* if we are using SDL, we don't need to malloc here because IMG_Load
@@ -84,13 +84,12 @@ int CreateStar(const char *filename, int pattern, int speed, int nstar)
     S->sW    = dW+(S->image[0])->width;
     S->sH    = dH+(S->image[0])->height;
 #endif /* not HAVE_LIBSDL */
-    for (i=0; i<nstar; i++)
-    {
-	S->point[i].cpat = rand() % pattern;
-	S->point[i].x    = rand() % S->sW;
-	S->point[i].y    = rand() % S->sH;
+    for (i=0; i<nstar; i++) {
+        S->point[i].cpat = rand() % pattern;
+        S->point[i].x    = rand() % S->sW;
+        S->point[i].y    = rand() % S->sH;
     }
-    
+
     return cust++;
 }
 
@@ -103,27 +102,24 @@ void DrawStar(int id)
 
 
     S = &(star[id]);
-    for (i=0; i<S->nstar; i++)
-    {
-	p = &(S->point[i]);
-	I = S->image[(p->cpat)++];
+    for (i=0; i<S->nstar; i++) {
+        p = &(S->point[i]);
+        I = S->image[(p->cpat)++];
 #ifdef HAVE_LIBSDL
-	PutImage(I,p->x - I->w, p->y - I->h);
+        PutImage(I,p->x - I->w, p->y - I->h);
 #else /* not HAVE_LIBSDL */
-	PutImage(I,p->x - I->width, p->y - I->height);
+        PutImage(I,p->x - I->width, p->y - I->height);
 #endif /* not HAVE_LIBSDL */
-	if (p->cpat >= S->pattern) p->cpat = 0;
+        if (p->cpat >= S->pattern) p->cpat = 0;
     }
-    
-    for (i=0; i<S->nstar; i++)
-    {
-	p = &(S->point[i]);
-	p->y += S->speed;
-	if (p->y < 0 || p->y > S->sH)
-	{
-	    p->x = rand() % S->sW;
-	    p->y = (S->speed > 0)?0:S->sH;
-	}
+
+    for (i=0; i<S->nstar; i++) {
+        p = &(S->point[i]);
+        p->y += S->speed;
+        if (p->y < 0 || p->y > S->sH) {
+            p->x = rand() % S->sW;
+            p->y = (S->speed > 0)?0:S->sH;
+        }
     }
 
     return;
@@ -140,12 +136,11 @@ void ChangeStarParameter(int id, int speed)
 
 int DeleteAllStar(void)
 {
-  int i;
-  for (i = 0; i < cust; i++)
-  {
-    FreeImages(star[i].image, star[i].pattern);
-    free(star[i].point);
-  }
-  
-  return 0;
+    int i;
+    for (i = 0; i < cust; i++) {
+        FreeImages(star[i].image, star[i].pattern);
+        free(star[i].point);
+    }
+
+    return 0;
 }

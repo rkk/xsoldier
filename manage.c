@@ -67,22 +67,20 @@ CharManage *NewManage(int playerMax, int enemyMax)
     New->flag_nopausemessage = False;
     New->program_should_quit = False;
 
-    for (i=0; i<New->PlayerMax; i++)
-    {
-	New->player[i] = (CharObj *)malloc(sizeof(CharObj));
-	New->player[i]->Data.used = False;
-	New->player[i]->Action    = NullAct;
-	New->player[i]->Realize   = NullReal;
-	New->player[i]->Hit       = NullHit;
+    for (i=0; i<New->PlayerMax; i++) {
+        New->player[i] = (CharObj *)malloc(sizeof(CharObj));
+        New->player[i]->Data.used = False;
+        New->player[i]->Action    = NullAct;
+        New->player[i]->Realize   = NullReal;
+        New->player[i]->Hit       = NullHit;
     }
 
-    for (i=0; i<New->EnemyMax; i++)
-    {
-	New->enemy[i] = (CharObj *)malloc(sizeof(CharObj));
-	New->enemy[i]->Data.used = False;
-	New->enemy[i]->Action    = NullAct;
-	New->enemy[i]->Realize   = NullReal;
-	New->enemy[i]->Hit       = NullHit;
+    for (i=0; i<New->EnemyMax; i++) {
+        New->enemy[i] = (CharObj *)malloc(sizeof(CharObj));
+        New->enemy[i]->Data.used = False;
+        New->enemy[i]->Action    = NullAct;
+        New->enemy[i]->Realize   = NullReal;
+        New->enemy[i]->Hit       = NullHit;
     }
 
     /* frequently used objects */
@@ -163,10 +161,10 @@ void ClearManage(CharManage *manage_temp)
     int i;
 
     if (manage->Stage > MaxStage)
-      /* slower if you cleared the last stage */
-	manage->Appear = - 100;
+        /* slower if you cleared the last stage */
+        manage->Appear = - 100;
     else
-	manage->Appear = - 50;
+        manage->Appear = - 50;
 
     manage->ZakoApp = True;
     manage->BossApp = False;
@@ -181,13 +179,11 @@ void ClearManage(CharManage *manage_temp)
      * to display the shoot down bonus
      */
 
-    for (i=0; i<manage->EnemyMax; i++)
-    {
-	if (manage->enemy[i]->Data.used == True)
-	{
-	    NewLargeBomb(manage->enemy[i]->Data.X,manage->enemy[i]->Data.Y);
-	    DelObj(manage->enemy[i]);
-	}
+    for (i=0; i<manage->EnemyMax; i++) {
+        if (manage->enemy[i]->Data.used == True) {
+            NewLargeBomb(manage->enemy[i]->Data.X,manage->enemy[i]->Data.Y);
+            DelObj(manage->enemy[i]);
+        }
     }
 }
 
@@ -198,12 +194,12 @@ void ResetManage(CharManage *manage_temp)
 
     manage->Level = 10;
     if (manage->Level > MaxLevel)
-	manage->Level = MaxLevel;
+        manage->Level = MaxLevel;
     if (manage->Level < 0)
-      manage->Level = 0;
+        manage->Level = 0;
 
     if (manage->flag_maxlevel == True)
-      manage->Level = MaxLevel;
+        manage->Level = MaxLevel;
 
     manage->Appear = - 50;
     manage->ZakoApp = True;
@@ -216,23 +212,21 @@ void ResetManage(CharManage *manage_temp)
 
     manage->showShootDown = 0;
 
-    for (i=0; i<manage->PlayerMax; i++)
-    {
-	if (manage->player[i]->Data.used == True)
-	    DelObj(manage->player[i]);
+    for (i=0; i<manage->PlayerMax; i++) {
+        if (manage->player[i]->Data.used == True)
+            DelObj(manage->player[i]);
     }
 
-    for (i=0; i<manage->EnemyMax; i++)
-    {
-	if (manage->enemy[i]->Data.used == True)
-	    DelObj(manage->enemy[i]);
+    for (i=0; i<manage->EnemyMax; i++) {
+        if (manage->enemy[i]->Data.used == True)
+            DelObj(manage->enemy[i]);
     }
 
     for (i=0; i<manage->PlayerMax; i++)
-      manage->player[i]->Data.used = False;
+        manage->player[i]->Data.used = False;
 
     for (i=0; i<manage->EnemyMax; i++)
-      manage->enemy[i]->Data.used = False;
+        manage->enemy[i]->Data.used = False;
 
     manage->PlayerNum = 0;
     manage->EnemyNum = 0;
@@ -243,9 +237,9 @@ void DeleteManage(CharManage *Del)
     int i;
 
     for (i=0; i<Del->PlayerMax; i++)
-	free(Del->player[i]);
+        free(Del->player[i]);
     for (i=0; i<Del->EnemyMax; i++)
-	free(Del->enemy[i]);
+        free(Del->enemy[i]);
 
     free(Del->player);
     free(Del->enemy);
@@ -256,96 +250,89 @@ void DeleteManage(CharManage *Del)
 }
 
 int NewObj(int mask,
-	   DelAtt (*action)(ObjData *my),
-	   DelAtt (*hit)(ObjData *my, ObjData *your),
-	   void (*realize)(ObjData *my, GrpData *grp))
+           DelAtt (*action)(ObjData *my),
+           DelAtt (*hit)(ObjData *my, ObjData *your),
+           void (*realize)(ObjData *my, GrpData *grp))
 {
     int i;
 
-    if (mask & (MPlayer|MPShot))
-    {
-	if (manage->PlayerNum >= manage->PlayerMax)
-          /* no more room for an object */
-	    return -1;
-	for (i=1; i<manage->PlayerMax; i++)
-	{
-	    if (manage->player[i]->Data.used == False)
-	    {
-		manage->player[i]->Data    = manage->New.Data;
-		manage->player[i]->Grp     = manage->New.Grp;
-		manage->player[i]->Action  = action;
-		manage->player[i]->Realize = realize;
-		manage->player[i]->Hit     = hit;
-		
-		manage->player[i]->Data.used = True;
-		manage->player[i]->Data.kill = False;
-		manage->player[i]->Data.HarfW = manage->player[i]->Data.Width / 2;
-		manage->player[i]->Data.HarfH = manage->player[i]->Data.Height / 2;
+    if (mask & (MPlayer|MPShot)) {
+        if (manage->PlayerNum >= manage->PlayerMax)
+            /* no more room for an object */
+            return -1;
+        for (i=1; i<manage->PlayerMax; i++) {
+            if (manage->player[i]->Data.used == False) {
+                manage->player[i]->Data    = manage->New.Data;
+                manage->player[i]->Grp     = manage->New.Grp;
+                manage->player[i]->Action  = action;
+                manage->player[i]->Realize = realize;
+                manage->player[i]->Hit     = hit;
 
-		manage->player[i]->Data.image = 0;
+                manage->player[i]->Data.used = True;
+                manage->player[i]->Data.kill = False;
+                manage->player[i]->Data.HarfW = manage->player[i]->Data.Width / 2;
+                manage->player[i]->Data.HarfH = manage->player[i]->Data.Height / 2;
+
+                manage->player[i]->Data.image = 0;
 #ifdef HAVE_LIBSDL
-		manage->player[i]->Grp.Width = manage->player[i]->Grp.image[0]->w;
-		manage->player[i]->Grp.Height = manage->player[i]->Grp.image[0]->h;
+                manage->player[i]->Grp.Width = manage->player[i]->Grp.image[0]->w;
+                manage->player[i]->Grp.Height = manage->player[i]->Grp.image[0]->h;
 #else /* not HAVE_LIBSDL */
-		manage->player[i]->Grp.Width = manage->player[i]->Grp.image[0]->width;
-		manage->player[i]->Grp.Height = manage->player[i]->Grp.image[0]->height;
+                manage->player[i]->Grp.Width = manage->player[i]->Grp.image[0]->width;
+                manage->player[i]->Grp.Height = manage->player[i]->Grp.image[0]->height;
 #endif /* not HAVE_LIBSDL */
-		manage->player[i]->Grp.HarfW = manage->player[i]->Grp.Width /2;
-		manage->player[i]->Grp.HarfH = manage->player[i]->Grp.Height /2;
+                manage->player[i]->Grp.HarfW = manage->player[i]->Grp.Width /2;
+                manage->player[i]->Grp.HarfH = manage->player[i]->Grp.Height /2;
                 manage->player[i]->Data.notShootingTime = 5;
-		
-		manage->PlayerNum++;
-		return i;
-	    }
-	}
-    }
-    else
-    {
-	if (manage->EnemyNum >= manage->EnemyMax)
-          /* no more room for an object */
-	    return -1;
+
+                manage->PlayerNum++;
+                return i;
+            }
+        }
+    } else {
+        if (manage->EnemyNum >= manage->EnemyMax)
+            /* no more room for an object */
+            return -1;
 
         /* 0 is reserved for end-of-stage boss */
-	if (manage->New.Data.EnemyAtt == BossDel)
-	    i = 0;
-	else
-	    i = 1;
-	for ( ; i<manage->EnemyMax; i++)
-	{
-	    if (manage->enemy[i]->Data.used == False)
-	    {
-		manage->enemy[i]->Data    = manage->New.Data;
-		manage->enemy[i]->Grp     = manage->New.Grp;
-		manage->enemy[i]->Action  = action;
-		manage->enemy[i]->Realize = realize;
-		manage->enemy[i]->Hit     = hit;
-		
-		manage->enemy[i]->Data.used = True;
-		manage->enemy[i]->Data.kill = False;
-		manage->enemy[i]->Data.HarfW = manage->enemy[i]->Data.Width / 2;
-		manage->enemy[i]->Data.HarfH = manage->enemy[i]->Data.Height / 2;
-		
-		manage->enemy[i]->Data.startTime = manage->Level;
-		manage->enemy[i]->Data.shotTime = (ShotTiming + manage->Level) / 2;
-		
-		manage->enemy[i]->Data.image = 0;
-		
+        if (manage->New.Data.EnemyAtt == BossDel)
+            i = 0;
+        else
+            i = 1;
+        for ( ; i<manage->EnemyMax; i++) {
+            if (manage->enemy[i]->Data.used == False) {
+                manage->enemy[i]->Data    = manage->New.Data;
+                manage->enemy[i]->Grp     = manage->New.Grp;
+                manage->enemy[i]->Action  = action;
+                manage->enemy[i]->Realize = realize;
+                manage->enemy[i]->Hit     = hit;
+
+                manage->enemy[i]->Data.used = True;
+                manage->enemy[i]->Data.kill = False;
+                manage->enemy[i]->Data.HarfW = manage->enemy[i]->Data.Width / 2;
+                manage->enemy[i]->Data.HarfH = manage->enemy[i]->Data.Height / 2;
+
+                manage->enemy[i]->Data.startTime = manage->Level;
+                manage->enemy[i]->Data.shotTime = (ShotTiming + manage->Level) / 2;
+
+                manage->enemy[i]->Data.image = 0;
+
 #ifdef HAVE_LIBSDL
-		manage->enemy[i]->Grp.Width = manage->enemy[i]->Grp.image[0]->w;
-		manage->enemy[i]->Grp.Height = manage->enemy[i]->Grp.image[0]->h;
+                manage->enemy[i]->Grp.Width = manage->enemy[i]->Grp.image[0]->w;
+                manage->enemy[i]->Grp.Height = manage->enemy[i]->Grp.image[0]->h;
 #else /* not HAVE_LIBSDL */
-		manage->enemy[i]->Grp.Width = manage->enemy[i]->Grp.image[0]->width;
-		manage->enemy[i]->Grp.Height = manage->enemy[i]->Grp.image[0]->height;
+                manage->enemy[i]->Grp.Width = manage->enemy[i]->Grp.image[0]->width;
+                manage->enemy[i]->Grp.Height = manage->enemy[i]->Grp.image[0]->height;
 #endif /* not HAVE_LIBSDL */
-		manage->enemy[i]->Grp.HarfW = manage->enemy[i]->Grp.Width / 2;
-		manage->enemy[i]->Grp.HarfH = manage->enemy[i]->Grp.Height / 2;
+                manage->enemy[i]->Grp.HarfW = manage->enemy[i]->Grp.Width / 2;
+                manage->enemy[i]->Grp.HarfH = manage->enemy[i]->Grp.Height / 2;
 
-		manage->enemy[i]->Data.showDamegeTime = 0;
+                manage->enemy[i]->Data.showDamegeTime = 0;
 
-		manage->EnemyNum++;
-		return i;
-	    }
-	}
+                manage->EnemyNum++;
+                return i;
+            }
+        }
     }
     /* should not reach here */
     return -1;
@@ -353,13 +340,12 @@ int NewObj(int mask,
 
 void DelObj(CharObj *del)
 {
-    if (del->Data.used == True)
-    {
-	del->Data.used = False;
-	if (del->Data.hitAtt & (MPlayer|MPShot))
-	    manage->PlayerNum--;
-	else
-	    manage->EnemyNum--;
+    if (del->Data.used == True) {
+        del->Data.used = False;
+        if (del->Data.hitAtt & (MPlayer|MPShot))
+            manage->PlayerNum--;
+        else
+            manage->EnemyNum--;
     }
 }
 
@@ -374,20 +360,18 @@ PlayerData *NewPlayerData(void)
      * it is allocated statically */
     if ((pw=getpwuid(getuid())) == NULL)
         snprintf(name, sizeof(name) - 1, "%d",getuid());
-    else
-    {
+    else {
         strncpy(name,pw->pw_name,sizeof(name));
         name[sizeof(name)-1]= '\0';
-   
-      /* check if the player name consists of only printable chars */
-      for (i = 0; (i <= sizeof(name) - 1) && (name[i] != '\0'); i++)
-        if (!isprint(name[i]))
-        {
-          fprintf(stderr, "warning: non-printable char found in your name, "
-                  "char %d (\\x%x), replacing it with ?\n",
-                  i, name[i]);
-          name[i] = '?';
-        }
+
+        /* check if the player name consists of only printable chars */
+        for (i = 0; (i <= sizeof(name) - 1) && (name[i] != '\0'); i++)
+            if (!isprint(name[i])) {
+                fprintf(stderr, "warning: non-printable char found in your name, "
+                        "char %d (\\x%x), replacing it with ?\n",
+                        i, name[i]);
+                name[i] = '?';
+            }
 
 
     }
@@ -408,17 +392,15 @@ PlayerData *NewPlayerData(void)
 void ClearEnemyShotManage(CharManage *manage_temp)
 {
     int i;
-    for (i=0; i<manage->EnemyMax; i++)
-    {
-      if (manage->enemy[i]->Data.used == True)
-	if ((manage->enemy[i]->Action == EnemyShotAct)
-            || (manage->enemy[i]->Action == HomingAct)
-            || (manage->enemy[i]->Action == EnemyLaserAct)
-            || (manage->enemy[i]->Action == BoundShotAct))
-	{
-          /* small is beautiful */
-          NewBomb(manage->enemy[i]->Data.X,manage->enemy[i]->Data.Y);
-          DelObj(manage->enemy[i]);
-	}
+    for (i=0; i<manage->EnemyMax; i++) {
+        if (manage->enemy[i]->Data.used == True)
+            if ((manage->enemy[i]->Action == EnemyShotAct)
+                    || (manage->enemy[i]->Action == HomingAct)
+                    || (manage->enemy[i]->Action == EnemyLaserAct)
+                    || (manage->enemy[i]->Action == BoundShotAct)) {
+                /* small is beautiful */
+                NewBomb(manage->enemy[i]->Data.X,manage->enemy[i]->Data.Y);
+                DelObj(manage->enemy[i]);
+            }
     }
 }

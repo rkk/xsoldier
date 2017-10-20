@@ -62,8 +62,7 @@ typedef unsigned long Pixel;
 typedef enum {NoneDel,NullDel,ZakoDel,BossDel} DelAtt;
 
 /* basic data of object */
-typedef struct
-{
+typedef struct {
     int used;
 
     int hitAtt;
@@ -72,11 +71,11 @@ typedef struct
     int HarfW,HarfH;
     /* don't modify above */
 
-  /* shoot if shotTime >= ShotTiming */
+    /* shoot if shotTime >= ShotTiming */
     int startTime;
     int shotTime;
 
-  int kill;
+    int kill;
     int HP;
     int Attack;
     int Point;
@@ -90,14 +89,13 @@ typedef struct
     int Cnt[16];
 
     int image;
-  int showDamegeTime;
-  int notShootingTime;
-  int shouldAct;
+    int showDamegeTime;
+    int notShootingTime;
+    int shouldAct;
 } ObjData;
 
 /* graphic data of object */
-typedef struct
-{
+typedef struct {
     Image **image;
 
     int Width,Height;
@@ -105,8 +103,7 @@ typedef struct
 } GrpData;
 
 /* prototype of object data */
-typedef struct
-{
+typedef struct {
     ObjData Data;
     GrpData Grp;
 
@@ -116,8 +113,7 @@ typedef struct
 } CharObj;
 
 /* table of objects */
-typedef struct
-{
+typedef struct {
     CharObj **player;
     CharObj **enemy;
 
@@ -128,7 +124,7 @@ typedef struct
     int EnemyMax;
     int EnemyNum;
 
-  /* frequently used objects */
+    /* frequently used objects */
     CharObj EnemyShot;
     CharObj Bomb;
     CharObj LargeBomb;
@@ -144,25 +140,23 @@ typedef struct
     int BossApp;
     int BossKill;
 
-  int BossTime;
-  int flag_maxlevel;
-  int start_power;
-  int showShootDown;
-  int flag_nopausemessage;
-  int program_should_quit;
+    int BossTime;
+    int flag_maxlevel;
+    int start_power;
+    int showShootDown;
+    int flag_nopausemessage;
+    int program_should_quit;
 } CharManage;
 /* this is global because we have only one table */
 
-typedef struct
-{
+typedef struct {
     char name[16];
     int score;
     int stage;
     int loop;
 } Record;
 
-typedef struct
-{
+typedef struct {
     Record Rec[11];
     int Ships;
     int Percent;

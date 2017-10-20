@@ -51,56 +51,50 @@ DelAtt DeleteHit(ObjData *my, ObjData *your)
 /* deal damage, explode if dead */
 DelAtt DamageHit(ObjData *my, ObjData *your)
 {
-  int temp = your->Attack;
+    int temp = your->Attack;
     if (my->HP < your->Attack)
-      temp = my->HP;
+        temp = my->HP;
 
     my->HP -= temp;
-   player->Rec[0].score += temp;
-    if (my->HP <= 0)
-    {
-      player->Rec[0].score -= 1;
-	if (manage->Loop > 2)
-	    ShotToPoint(my->X,my->Y,manage->player[0]->Data.X,manage->player[0]->Data.Y,5);
-	NewBomb(my->X,my->Y);
+    player->Rec[0].score += temp;
+    if (my->HP <= 0) {
+        player->Rec[0].score -= 1;
+        if (manage->Loop > 2)
+            ShotToPoint(my->X,my->Y,manage->player[0]->Data.X,manage->player[0]->Data.Y,5);
+        NewBomb(my->X,my->Y);
 
         my->showDamegeTime = 0;
-	return my->EnemyAtt;
+        return my->EnemyAtt;
+    } else {
+        my->showDamegeTime = 15;
+        return NoneDel;
     }
-    else
-    {
-      my->showDamegeTime = 15; 
-      return NoneDel;
-    }
-    
+
 }
 
 /* same above, but with big explosion */
 DelAtt LargeDamageHit(ObjData *my, ObjData *your)
 {
-  int temp = your->Attack;
+    int temp = your->Attack;
     if (my->HP < your->Attack)
-      temp = my->HP;
+        temp = my->HP;
 
     my->HP -= temp;
-   player->Rec[0].score += temp;
+    player->Rec[0].score += temp;
 
-    if (my->HP <= 0)
-    {
-      player->Rec[0].score -= 1;
-	if (manage->Loop > 2)
-	    ShotToPoint(my->X,my->Y,manage->player[0]->Data.X,manage->player[0]->Data.Y,5);
-	NewLargeBomb(my->X,my->Y);
+    if (my->HP <= 0) {
+        player->Rec[0].score -= 1;
+        if (manage->Loop > 2)
+            ShotToPoint(my->X,my->Y,manage->player[0]->Data.X,manage->player[0]->Data.Y,5);
+        NewLargeBomb(my->X,my->Y);
 
         my->showDamegeTime = 0;
-	return my->EnemyAtt;
+        return my->EnemyAtt;
+    } else {
+        my->showDamegeTime = 15;
+        return NoneDel;
     }
-    else
-    {
-      my->showDamegeTime = 15;      
-      return NoneDel;
-    }
-    
+
 }
 
 
@@ -114,14 +108,14 @@ void NullReal(ObjData *my, GrpData *grp)
 void DrawRec(ObjData *my, GrpData *grp)
 {
 #ifdef HAVE_LIBSDL
-  /* use double-standard here to keep the 10 pixel boundary */
-  sdl_draw_rect(my->X-my->HarfW + 10, my->Y-my->HarfH + 10,
-                my->Width, my->Height);
+    /* use double-standard here to keep the 10 pixel boundary */
+    sdl_draw_rect(my->X-my->HarfW + 10, my->Y-my->HarfH + 10,
+                  my->Width, my->Height);
 
 #else /* not HAVE_LIBSDL */
-  /*
-    XFillRectangle(dpy,WorkPixmap,FillGC,my->X-my->HarfW,my->Y-my->HarfH,my->Width,my->Height);
-  */
+    /*
+      XFillRectangle(dpy,WorkPixmap,FillGC,my->X-my->HarfW,my->Y-my->HarfH,my->Width,my->Height);
+    */
     XDrawRectangle(dpy,WorkPixmap,FillGC,my->X-my->HarfW,my->Y-my->HarfH,my->Width,my->Height);
 #endif /* not HAVE_LIBSDL */
     return;

@@ -18,9 +18,9 @@
 #endif /* not HAVE_LIBSDL */
 
 #ifdef EXTERN_DEF
- #define EXTERN 
+#define EXTERN
 #else
- #define EXTERN extern
+#define EXTERN extern
 #endif
 
 /* wait by signal */
