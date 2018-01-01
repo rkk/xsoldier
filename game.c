@@ -8,14 +8,11 @@
 
 /* DEBUG and JSTK are defined in config.h */
 #include <config.h>
-/* pause */
 #include <unistd.h>
-/* rand */
 #include <stdlib.h>
-/* strlen */
 #include <string.h>
-
 #include <stdio.h>
+
 /*
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -30,7 +27,6 @@
 #include "extern.h"
 #include "key.h"
 #include "star.h"
-/* ClearEnemyShotManage, ClearManage, DelObj */
 #include "manage.h"
 #include "graphic.h"
 #include "input.h"
@@ -39,18 +35,13 @@
 #include "joystick.h"
 #endif
 
-/* DamageHit, LargeDamageHit
- * DrawRec if DEBUG
- */
 #include "callback.h"
 #include "game.h"
 
 /* local functions */
 static void DrawInfo(void);
-
 static void do_actions(void);
 static void collision_detection(void);
-
 static int shoot_down_bonus(int percent, int loop, int stage);
 /*
 static int perfect_bonus(int loop, int stage);
@@ -58,33 +49,56 @@ static int perfect_bonus(int loop, int stage);
 
 int mainLoop(void)
 {
-    int obj; /* loop counter */
-
-    int ocheck; /* counter for already checked objects */
-
-
-    int oneUp = 0; /* 1up counter */
+    int loop_counter;
+    int checked_counter;
+    int one_up_counter = 0;
 
     /* functions of normal enemies, weak ones first */
     int (*NewEnemy[])(int x, int y) = {
-        NewEnemy1,NewEnemy2,NewEnemy3,NewEnemy4,NewEnemy5,
-        NewEnemy6,NewEnemy7,NewEnemy8,NewEnemy9
+        NewEnemy1,
+        NewEnemy2,
+        NewEnemy3,
+        NewEnemy4,
+        NewEnemy5,
+        NewEnemy6,
+        NewEnemy7,
+        NewEnemy8,
+        NewEnemy9
     };
 
     /* functions of end-of-stage bosses */
     int (*NewBoss[])(void) = {
-        NewBoss1,NewBoss2,NewBoss3,NewBoss4,NewBoss5,
-        NewBoss6,NewBoss7,NewBoss8
+        NewBoss1,
+        NewBoss2,
+        NewBoss3,
+        NewBoss4,
+        NewBoss5,
+        NewBoss6,
+        NewBoss7,
+        NewBoss8
     };
 
     /* number of normal enemies in each stage */
-    int StageObj[] = {
-        80,80,100,100,120,120,140,140
+    int enemies_on_stage[] = {
+        80,
+        80,
+        100,
+        100,
+        120,
+        120,
+        140,
+        140
     };
 
-    char StageName[][16] = {
-        "Stage 1","Stage 2","Stage 3","Stage 4","Stage 5",
-        "Stage 6","Stage 7","Final Stage",
+    char names_of_stage[][16] = {
+        "Stage 1",
+        "Stage 2",
+        "Stage 3",
+        "Stage 4",
+        "Stage 5",
+        "Stage 6",
+        "Stage 7",
+        "Final Stage",
         "All Clear!"
     };
 
@@ -131,7 +145,6 @@ int mainLoop(void)
         if (manage->BossKill == True) {
             /* the boss is killed, or it escaped */
             manage->Stage++;
-
             manage->Level += 5;
 
             if (manage->BossTime >=1) {
@@ -149,13 +162,16 @@ int mainLoop(void)
             } else {
                 manage->Level -= 3;
             }
-            if (manage->Level > MaxLevel)
+            if (manage->Level > MaxLevel) {
                 manage->Level = MaxLevel;
-            if (manage->Level < 0)
+            }
+            if (manage->Level < 0) {
                 manage->Level = 0;
+            }
 
-            if (manage->flag_maxlevel == True)
+            if (manage->flag_maxlevel == True) {
                 manage->Level = MaxLevel;
+            }
 
             ClearManage(manage);
 
@@ -164,16 +180,18 @@ int mainLoop(void)
         }
 
         if (manage->Appear >= 100) {
-            if ((manage->StageEnemy >= StageObj[manage->Stage-1]) && (manage->BossApp==False)) {
+            if ((manage->StageEnemy >= enemies_on_stage[manage->Stage-1]) && (manage->BossApp == False)) {
                 /* the boss appears */
                 if (NewBoss[manage->Stage-1]() != -1) {
                     manage->ZakoApp = False;
                     manage->BossApp = True;
                     manage->StageEnemy++;
-                    if (manage->Stage == 8)
+                    if (manage->Stage == 8) {
                         manage->BossTime = 3000;
-                    else
+                    }
+                    else {
                         manage->BossTime = 2000;
+                    }
                 }
             } else if (manage->ZakoApp == True) {
                 /* normal enemy */
@@ -183,11 +201,11 @@ int mainLoop(void)
             }
             /* how often normal enemies appear */
             manage->Appear = 89;
-        } else
+        } else {
             manage->Appear++;
+        }
 
         do_actions();
-
         collision_detection();
 
 
@@ -195,9 +213,7 @@ int mainLoop(void)
         if (player->Rec[0].score >= player->Next) {
             player->Next += EVERY1UP;
             player->Ships++;
-
-            /* counter to display 1up message */
-            oneUp = 1;
+            one_up_counter = 1;
         }
 
         /* draw the window */
@@ -207,65 +223,75 @@ int mainLoop(void)
         DrawStar(StarPtn1);
         DrawStar(StarPtn2);
         /* pixmaps for objects */
-        for (obj=0,ocheck=0; (obj<manage->EnemyMax && ocheck<manage->EnemyNum); obj++) {
-            if (manage->enemy[obj]->Data.used == True) {
-                manage->enemy[obj]->Realize(&(manage->enemy[obj]->Data),&(manage->enemy[obj]->Grp));
-                ocheck++;
+        for (loop_counter = 0, checked_counter= 0; (loop_counter<manage->EnemyMax && checked_counter < manage->EnemyNum); loop_counter++) {
+            if (manage->enemy[loop_counter]->Data.used == True) {
+                manage->enemy[loop_counter]->Realize(
+                    &(manage->enemy[loop_counter]->Data),
+                    &(manage->enemy[loop_counter]->Grp)
+                );
+                checked_counter++;
             }
         }
-        for (obj=manage->PlayerMax-1,ocheck=0; (obj>=0 && ocheck<manage->PlayerNum); obj--) {
-            if (manage->player[obj]->Data.used == True) {
-                manage->player[obj]->Realize(&(manage->player[obj]->Data),&(manage->player[obj]->Grp));
-                ocheck++;
+        for (loop_counter = manage->PlayerMax-1, checked_counter = 0; (loop_counter >= 0 && checked_counter < manage->PlayerNum); loop_counter--) {
+            if (manage->player[loop_counter]->Data.used == True) {
+                manage->player[loop_counter]->Realize(
+                    &(manage->player[loop_counter]->Data),
+                    &(manage->player[loop_counter]->Grp)
+                );
+                checked_counter++;
             }
         }
-        if (player->Rec[0].score >= 10000000)
+        if (player->Rec[0].score >= 10000000) {
             player->Rec[0].score = 10000000;
+        }
 
         /* score and other stuff */
         DrawInfo();
 
-        /* yet more misc stuff */
-        if (oneUp != 0) {
-            if (oneUp%4 > 1)
+        if (one_up_counter != 0) {
+            if (one_up_counter%4 > 1) {
                 draw_string(440, 620, "1UP", strlen("1UP"));
-            oneUp++;
-            if (oneUp > 50)
-                oneUp = 0;
+                one_up_counter++;
+            }
+
+            if (one_up_counter> 50) {
+                one_up_counter = 0;
+            }
         }
 
-        if (manage->player[0]->Data.kill==True && player->Ships==0)
+        if (manage->player[0]->Data.kill == True && player->Ships == 0) {
             draw_string(230, 300, "Game Over", strlen("Game Over"));
+        }
 
         if (manage->Appear < 0) {
-            char Percent[32];
-            char Bonus[32];
-            char Perfect[32];
+            char percent[32];
+            char bonus[32];
+            char perfect[32];
 
             if (manage->showShootDown != 0) {
                 /* shoot down bonus message */
                 if (manage->BossTime >= 1) {
-                    sprintf(Percent,"shoot down %02d%%",player->Percent);
-                    draw_string(210, 370, Percent, strlen(Percent));
+                    sprintf(percent,"shoot down %02d%%",player->Percent);
+                    draw_string(210, 370, percent, strlen(percent));
 
 
-                    sprintf(Bonus,"Bonus %d pts", shoot_down_bonus(player->Percent, manage->Loop, manage->Stage));
+                    sprintf(bonus,"Bonus %d pts", shoot_down_bonus(player->Percent, manage->Loop, manage->Stage));
                     draw_string(260 + manage->Appear*3, 400,
-                                Bonus, strlen(Bonus));
+                                bonus, strlen(bonus));
 
                     if (player->Percent >= 100) {
-                        sprintf(Perfect,"Perfect!!");
+                        sprintf(perfect,"Perfect!!");
                         draw_string(170 - manage->Appear*3, 420,
-                                    Perfect, strlen(Perfect));
+                                    perfect, strlen(perfect));
                     }
                 } else {
-                    snprintf(Percent, 32, "the boss escaped");
-                    draw_string(200,370,Percent, strlen(Percent));
+                    snprintf(percent, 32, "the boss escaped");
+                    draw_string(200,370, percent, strlen(percent));
                 }
 
             }
-            draw_string(230, 320, StageName[manage->Stage-1],
-                        strlen(StageName[manage->Stage-1]));
+            draw_string(230, 320, names_of_stage[manage->Stage-1],
+                        strlen(names_of_stage[manage->Stage-1]));
         }
         if (manage->Appear == 0) {
             ChangeStarParameter(StarPtn1,5);
@@ -359,10 +385,6 @@ static void DrawInfo(void)
             DrawRec(&(manage->player[i]->Data), NULL);
 
 #endif /* DEBUG */
-
-
-
-
 }
 
 static void do_actions(void)

@@ -13,54 +13,62 @@
 #include "xsoldier.h"
 #include "common.h"
 #include "extern.h"
-/* ShotToPoint */
 #include "enemyshot.h"
-/* sdl_draw_rect */
 #include "graphic.h"
 
 #include "callback.h"
 
-/* action */
-/* do nothing */
+/*
+ * Action: Do nothing.
+ */
 DelAtt NullAct(ObjData *my)
 {
     return NoneDel;
 }
 
 
-/* hit */
-/* nothing can hit me, I am immutable */
+/*
+ * Hit: Immutable.
+ */
 DelAtt NullHit(ObjData *my, ObjData *your)
 {
     return NoneDel;
 }
 
-/* simply die */
+/*
+ * Hit: Die without explosion.
+ */
 DelAtt NullDelHit(ObjData *my, ObjData *your)
 {
     return NullDel;
 }
 
-/* die with explosion */
+/*
+ * Hit: Die with explosion.
+ */
 DelAtt DeleteHit(ObjData *my, ObjData *your)
 {
     NewBomb(my->X,my->Y);
     return my->EnemyAtt;
 }
 
-/* deal damage, explode if dead */
+/*
+ * Deal damage, explode if dead.
+ */
 DelAtt DamageHit(ObjData *my, ObjData *your)
 {
     int temp = your->Attack;
-    if (my->HP < your->Attack)
+    if (my->HP < your->Attack) {
         temp = my->HP;
+    }
 
     my->HP -= temp;
     player->Rec[0].score += temp;
     if (my->HP <= 0) {
         player->Rec[0].score -= 1;
-        if (manage->Loop > 2)
+        if (manage->Loop > 2) {
             ShotToPoint(my->X,my->Y,manage->player[0]->Data.X,manage->player[0]->Data.Y,5);
+        }
         NewBomb(my->X,my->Y);
 
         my->showDamegeTime = 0;
@@ -72,20 +80,24 @@ DelAtt DamageHit(ObjData *my, ObjData *your)
 
 }
 
-/* same above, but with big explosion */
+/*
+ * Deal damage, big explosion
+ */
 DelAtt LargeDamageHit(ObjData *my, ObjData *your)
 {
     int temp = your->Attack;
-    if (my->HP < your->Attack)
+    if (my->HP < your->Attack) {
         temp = my->HP;
+    }
 
     my->HP -= temp;
     player->Rec[0].score += temp;
 
     if (my->HP <= 0) {
         player->Rec[0].score -= 1;
-        if (manage->Loop > 2)
+        if (manage->Loop > 2) {
             ShotToPoint(my->X,my->Y,manage->player[0]->Data.X,manage->player[0]->Data.Y,5);
+        }
         NewLargeBomb(my->X,my->Y);
 
         my->showDamegeTime = 0;
@@ -121,10 +133,11 @@ void DrawRec(ObjData *my, GrpData *grp)
     return;
 }
 
-/* display pixmap */
+/*
+ * Display pixmap on screen.
+ */
 void DrawImage(ObjData *my, GrpData *grp)
 {
     PutImage(grp->image[my->image],my->X - grp->HarfW, my->Y - grp->HarfH);
-
     return;
 }
